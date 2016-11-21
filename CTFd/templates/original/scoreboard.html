@@ -9,24 +9,74 @@
 <div class="container main-container">
     <div id="score-graph"></div>
     <br>
-
-    <table id="scoreboard" class="table table-striped">
-        <thead>
-            <tr>
-                <td width="10px"><b>Place</b>
-                </td>
-                <td><b>Team</b>
-                </td>
-                <td><b>Score</b>
-                </td>
-            </tr>
-        </thead>
-        <tbody>
-        {% for team in teams %}
-            <tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
-        {% endfor %}
-        </tbody>
-    </table>
+    <div class="row">
+        <div class="col-md-4">
+            <div class="">
+                <h1>Overall</h1>
+            </div>
+            <table id="scoreboard" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td width="10px"><b>Place</b>
+                        </td>
+                        <td><b>Team</b>
+                        </td>
+                        <td><b>Score</b>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for team in teams %}
+                    <tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="">
+                <h1>High School</h1>
+            </div>
+            <table id="hs_scoreboard" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td width="10px"><b>Place</b>
+                        </td>
+                        <td><b>Team</b>
+                        </td>
+                        <td><b>Score</b>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for team in hs_teams %}
+                    <tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="col-md-4">
+            <div class="">
+                <h1>College</h1>
+            </div>
+            <table id="college_scoreboard" class="table table-striped">
+                <thead>
+                    <tr>
+                        <td width="10px"><b>Place</b>
+                        </td>
+                        <td><b>Team</b>
+                        </td>
+                        <td><b>Score</b>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for team in college_teams %}
+                    <tr><td>{{ loop.index }}</td><td><a href="{{ request.script_root }}/team/{{ team.teamid }}">{{ team.name }}</a></td><td>{{ team.score }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 {% endblock %}
 

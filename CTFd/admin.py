@@ -575,8 +575,8 @@ def admin_graph(graph_type):
 @admin.route('/admin/scoreboard')
 @admins_only
 def admin_scoreboard():
-    standings = get_standings(admin=True)
-    return render_template('admin/scoreboard.html', teams=standings)
+    standings, hs_standings, college_standings = get_standings(admin=True)
+    return render_template('admin/scoreboard.html', teams=standings, hs_standings=hs_standings, college_standings=college_standings)
 
 
 @admin.route('/admin/teams/<teamid>/awards', methods=['GET'])

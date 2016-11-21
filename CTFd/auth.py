@@ -97,6 +97,10 @@ def register():
         name = request.form['name']
         email = request.form['email']
         password = request.form['password']
+        affiliation = request.form['affiliation']
+        bracket = request.form['bracket']
+        country = request.form['country']
+        website = request.form['website']
 
         name_len = len(name) == 0
         names = Teams.query.add_columns('name', 'id').filter_by(name=name).first()
@@ -119,10 +123,12 @@ def register():
             errors.append('Pick a longer team name')
 
         if len(errors) > 0:
-            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'], password=request.form['password'])
+            return render_template('register.html', errors=errors, name=request.form['name'], email=request.form['email'],
+                password=request.form['password'], affiliation=request.form['affiliation'], bracket=request.form['bracket'],
+                country=request.form['country'], website=request.form['website'])
         else:
             with app.app_context():
-                team = Teams(name, email.lower(), password)
+                team = Teams(name, email.lower(), password, affiliation, bracket, country, website)
                 db.session.add(team)
                 db.session.commit()
                 db.session.flush()

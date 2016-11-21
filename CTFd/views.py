@@ -166,6 +166,7 @@ def profile():
             email = request.form.get('email')
             website = request.form.get('website')
             affiliation = request.form.get('affiliation')
+            bracket = request.form.get('bracket')
             country = request.form.get('country')
 
             user = Teams.query.filter_by(id=session['id']).first()
@@ -193,7 +194,7 @@ def profile():
 
             if len(errors) > 0:
                 return render_template('profile.html', name=name, email=email, website=website,
-                                       affiliation=affiliation, country=country, errors=errors)
+                                       affiliation=affiliation, country=country, errors=errors, bracket=bracket)
             else:
                 team = Teams.query.filter_by(id=session['id']).first()
                 if not get_config('prevent_name_change'):
@@ -209,6 +210,7 @@ def profile():
                 team.website = website
                 team.affiliation = affiliation
                 team.country = country
+                team.bracket = bracket
                 db.session.commit()
                 db.session.close()
                 return redirect(url_for('views.profile'))
@@ -219,9 +221,10 @@ def profile():
             website = user.website
             affiliation = user.affiliation
             country = user.country
+            bracket = user.bracket
             prevent_name_change = get_config('prevent_name_change')
             confirm_email = get_config('verify_emails') and not user.verified
-            return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation,
+            return render_template('profile.html', name=name, email=email, website=website, affiliation=affiliation, bracket=bracket,
                                    country=country, prevent_name_change=prevent_name_change, confirm_email=confirm_email)
     else:
         return redirect(url_for('auth.login'))

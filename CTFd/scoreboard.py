@@ -18,32 +18,54 @@ def get_standings(admin=False, count=None):
         standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
             .join(sumscores, Teams.id == sumscores.columns.teamid) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        hs_standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.bracket == "hs")\
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        college_standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), Teams.banned, sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.bracket == "college")\
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     else:
         standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
             .join(sumscores, Teams.id == sumscores.columns.teamid) \
             .filter(Teams.banned == False) \
             .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        hs_standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.banned == False) \
+            .filter(Teams.bracket == "hs")\
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        college_standings_query = db.session.query(Teams.id.label('teamid'), Teams.name.label('name'), sumscores.columns.score) \
+            .join(sumscores, Teams.id == sumscores.columns.teamid) \
+            .filter(Teams.banned == False) \
+            .filter(Teams.bracket == "college")\
+            .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
     if count is None:
         standings = standings_query.all()
+        hs_standings = hs_standings_query.all()
+        college_standings = college_standings_query.all()
     else:
         standings = standings_query.limit(count).all()
+        hs_standings = hs_standings_query.limit(count).all()
+        college_standings = college_standings_query.limit(count).all()
     db.session.close()
-    return standings
+    return standings, hs_standings, college_standings
 
 
 @scoreboard.route('/scoreboard')
 def scoreboard_view():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    standings = get_standings()
-    return render_template('scoreboard.html', teams=standings)
+    standings, hs_standings, college_standings = get_standings()
+    return render_template('scoreboard.html', teams=standings, hs_standings=hs_standings, college_standings=college_standings)
 
 
 @scoreboard.route('/scores')
 def scores():
     if get_config('view_scoreboard_if_authed') and not authed():
         return redirect(url_for('auth.login', next=request.path))
-    standings = get_standings()
+    standings, hs_standings, college_standings = get_standings()
     json = {'standings':[]}
     for i, x in enumerate(standings):
         json['standings'].append({'pos':i+1, 'id':x.teamid, 'team':x.name,'score':int(x.score)})
@@ -62,7 +84,7 @@ def topteams(count):
         count = 10
 
     json = {'scores':{}}
-    standings = get_standings(count=count)
+    standings, hs_standings, college_standings = get_standings(count=count)
 
     for team in standings:
         solves = Solves.query.filter_by(teamid=team.teamid).all()
